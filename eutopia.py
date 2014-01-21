@@ -11,8 +11,7 @@ class Farm:
         self.long = long
         self.area = area
         
-        self.activity = None
-        self.state = 'unplanted'
+        self.last_activity = None
         
 
 class Family:
@@ -22,6 +21,10 @@ class Family:
         self.bank_balance = 1000000.00
         self.equipment = []
         self.preferences = {'money': 1}
+        
+    def add_farm(self, farm):
+        self.farms.append(farm)
+        farm.family = self
         
     def make_planting_decision(self, activities, farm):    
         best = None
@@ -36,15 +39,18 @@ class Family:
             if best is None or total > best_total:
                 best = activity
                 best_total = total
-                
-        farm.activity = best
-        farm.state = 'planted'        
+        
+        return best        
         
     
     def step(self):
         for farm in self.farms:
-            if farm.state == 'unplanted':
-                self.make_planting_decision(eutopia.activities, farm)
+            activity = self.make_planting_decision(eutopia.activities, farm)
+            
+            money = activity.get_product('money', farm)
+            self.bank_balance += money
+            
+            farm.last_activity = activity
 
 
 class Eutopia:
@@ -61,7 +67,7 @@ class Eutopia:
         self.families = []
         for farm in self.farms:
             family = Family(self)
-            family.farms.append(farm)
+            family.add_farm(farm)
             self.families.append(family)
             
     def step(self):
@@ -76,4 +82,4 @@ if __name__=='__main__':
     eutopia.step()
     
     for farm in eutopia.farms[:10]:
-        print farm.state, farm.activity.name
+        print farm.last_activity.name, farm.family.bank_balance

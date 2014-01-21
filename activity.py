@@ -43,8 +43,8 @@ aggregate_measures = {
         'duramSeedOrganic': Normal(50,10),
         'labour': Normal(5,1),
         'certification': Normal(1,0),
-        'duram': Normal(50,10),
-        'duramOrganic': Normal(80,10),
+        'duram': Normal(300,10),
+        'duramOrganic': Normal(300,10),
         },
     'environment': {
         'carbon': Normal(1,0),
