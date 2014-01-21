@@ -1,6 +1,6 @@
 import map
 import activity
-
+import intervention
 
 class Farm:
     def __init__(self, id, county, lat, long, area, land_type):
@@ -45,7 +45,7 @@ class Family:
     
     def step(self):
         for farm in self.farms:
-            activity = self.make_planting_decision(eutopia.activities, farm)
+            activity = self.make_planting_decision(eutopia.activities.activities, farm)
             
             money = activity.get_product('money', farm)
             self.bank_balance += money
@@ -57,7 +57,9 @@ class Eutopia:
     def __init__(self):
         self.map = map.Map('guatemala.json')
         
-        self.activities = activity.Activities().activities
+        self.activities = activity.Activities()
+        
+        self.time = 0
         
         self.farms = []
         for farm_data in self.map.farms:
@@ -73,13 +75,51 @@ class Eutopia:
     def step(self):
         for family in self.families:
             family.step()
+        self.time += 1
             
-        
+    def get_activity_count(self):
+        activities = {}
+        for farm in self.farms:
+            if farm.last_activity is not None:
+                name = farm.last_activity.name
+                if name not in activities:
+                    activities[name] = 1
+                else:
+                    activities[name] += 1
+        return activities            
+                
         
 if __name__=='__main__':
+
+    interventions = []
     eutopia = Eutopia()
     
-    eutopia.step()
+    interventions.append(intervention.PriceIntervention(5, 'duramSeed', 10))
+
+    interventions.append(intervention.PriceIntervention(7, 'duramSeedOrganic', 0.001))
+
     
-    for farm in eutopia.farms[:10]:
-        print farm.last_activity.name, farm.family.bank_balance
+    time = 0
+    def step():
+        global time
+        for intervention in interventions:
+            if time >= intervention.time:
+                intervention.apply(eutopia, time)
+        time += 1
+    
+        eutopia.step()
+    
+    
+    activities = []
+    for i in range(10):
+        step()
+        activities.append(eutopia.get_activity_count())
+        
+    print activities    
+    
+    import pylab
+    pylab.plot(range(10), [a.get('durumWheatConventional',0) for a in activities])
+    pylab.plot(range(10), [a.get('durumWheatGreen',0) for a in activities])
+    pylab.show()
+
+        

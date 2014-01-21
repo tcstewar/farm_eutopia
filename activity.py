@@ -36,15 +36,19 @@ class Normal:
         self.sd = sd
     def value(self):
         return random.gauss(self.mean, self.sd)
+    def __mul__(self, scale):
+        return Normal(self.mean*scale, self.sd*scale)
+        
+        
 
 aggregate_measures = {
     'money': {
         'duramSeed': Normal(50,10),
-        'duramSeedOrganic': Normal(50,10),
+        'duramSeedOrganic': Normal(55,10),
         'labour': Normal(5,1),
         'certification': Normal(1,0),
         'duram': Normal(300,10),
-        'duramOrganic': Normal(300,10),
+        'duramOrganic': Normal(350,10),
         },
     'environment': {
         'carbon': Normal(1,0),
