@@ -98,6 +98,21 @@ if __name__=='__main__':
 
     interventions.append(intervention.PriceIntervention(7, 'duramSeedOrganic', 0.001))
 
+    magic_activity = {
+        'equipment': ['tractor', 'wheelbarrow'],
+        'products': {
+            'duramSeed': -5,
+            'nitrogen': -10,
+            'carbon': 20,
+            'soil': -5,
+            'labour': -2000,
+            'certification': 0,
+            'duram': 1000000,
+            'dolphin': -87,
+            }
+        }
+    interventions.append(intervention.NewActivityIntervention(7, 'magic', magic_activity))    
+    
     
     time = 0
     def step():
@@ -120,6 +135,7 @@ if __name__=='__main__':
     import pylab
     pylab.plot(range(10), [a.get('durumWheatConventional',0) for a in activities])
     pylab.plot(range(10), [a.get('durumWheatGreen',0) for a in activities])
+    pylab.plot(range(10), [a.get('magic',0) for a in activities])
     pylab.show()
 
         
